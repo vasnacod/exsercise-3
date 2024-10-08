@@ -30,6 +30,20 @@ module "vpc" {
   region                 = var.region
 }
 
+module "secretmanager" {
+  source             = "./components/smngr"
+  red_db_name        = var.red_db_name
+  red_admin_username = var.red_admin_username
+  red_admin_password = var.red_admin_password
+  project_name       = var.project_name
+  smname             = var.smname
+}
+output "smanger_name" {
+  value = module.secretmanager.secret_name
+} 
+output "smanger_id" {
+  value = module.secretmanager.secret_id
+} 
 module "redshift" {
   source             = "./components/reds"
   project_name       = var.project_name
@@ -45,4 +59,8 @@ module "redshift" {
   red_numnodes       = var.red_numnodes
   red_public         = var.red_public
   red_encrypted      = var.red_encrypted
+  smname = var.smname
+  secret_id         = module.secretmanager.secret_id
+  secret_version_id = module.secretmanager.secret_version_id
+  secret_arn = module.secretmanager.secret_arn
 }

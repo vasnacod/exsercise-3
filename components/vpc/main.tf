@@ -141,3 +141,28 @@ resource "aws_iam_role_policy_attachment" "redshift-role-policy-attachment" {
   role       = aws_iam_role.redshift-role.name
   policy_arn = aws_iam_policy.redshift-scheduler-policy.arn
 }
+
+#sm key
+resource "aws_iam_policy" "redshift-secrets-manager-policy" {
+  name        = "${var.project_name}-redshift-secrets-manager-policy"
+  description = "Policy to allow Redshift to read from Secrets Manager"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "redshift-secrets-manager-policy-attachment" {
+  role       = aws_iam_role.redshift-role.name
+  policy_arn = aws_iam_policy.redshift-secrets-manager-policy.arn
+}

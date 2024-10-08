@@ -1,5 +1,9 @@
 variable "project_name" {}
 variable "red_cluster_ident" {}
+variable "smname" {}
+variable "secret_id" {}
+variable "secret_arn" {}
+variable "secret_version_id" {}
 variable "red_db_name"  {}
 variable "red_admin_username"  {}
 variable "red_admin_password"  {}

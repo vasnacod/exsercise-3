@@ -14,11 +14,16 @@ variable "public_subnet_az2_cidr" {}
 variable "azzonea" {}
 variable "azzoneb" {}
 
+variable "smname" {}
 
 variable "red_cluster_ident" {}
 variable "red_db_name" {}
-variable "red_admin_username" {}
-variable "red_admin_password" {}
+variable "red_admin_username" {
+  sensitive = true
+}
+variable "red_admin_password" {
+  sensitive = true
+}
 variable "red_node_type" {}
 variable "red_cluster_type" {}
 variable "red_numnodes" {}

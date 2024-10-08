@@ -1,8 +1,20 @@
+data "aws_secretsmanager_secret" "smanager" {
+ arn = var.secret_arn
+}
+
+data "aws_secretsmanager_secret_version" "smanagerver" {
+  secret_id = data.aws_secretsmanager_secret.smanager.id
+}
+
+locals {
+  secret_data = jsondecode(data.aws_secretsmanager_secret_version.smanagerver.secret_string)
+}
+
 resource "aws_redshift_cluster" "redshift-cluster" {
   cluster_identifier = var.red_cluster_ident
-  database_name      = var.red_db_name
-  master_username    = var.red_admin_username
-  master_password    = var.red_admin_password
+  database_name = local.secret_data["name"]
+  master_username = local.secret_data["username"]
+  master_password = local.secret_data["password"]
   node_type          = var.red_node_type
   cluster_type       = var.red_cluster_type
   vpc_security_group_ids = var.secgrpid
@@ -19,6 +31,7 @@ resource "aws_redshift_cluster" "redshift-cluster" {
   tags = {
     Name        = "${var.project_name}-redshift-cluster"
   }
+ depends_on = [data.aws_secretsmanager_secret_version.smanagerver]
 }
 
 resource "aws_redshift_scheduled_action" "resume" {
