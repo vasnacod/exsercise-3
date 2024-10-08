@@ -19,4 +19,30 @@ provider "aws" {
   }
 } */
 
+module "vpc" {
+  source                 = "./components/vpc"
+  project_name           = var.project_name
+  vpc_cidr               = var.vpc_cidr
+  public_subnet_az1_cidr = var.public_subnet_az1_cidr
+  public_subnet_az2_cidr = var.public_subnet_az2_cidr
+  azzonea                = var.azzonea
+  azzoneb                = var.azzoneb
+  region                 = var.region
+}
 
+module "redshift" {
+  source             = "./components/reds"
+  project_name       = var.project_name
+  iam_roles_arn      = module.vpc.iam_roles_arn
+  secgrpid           = module.vpc.secgrpid
+  redsubnetgrp       = module.vpc.redsubnetgrp
+  red_cluster_ident  = var.red_cluster_ident
+  red_db_name        = var.red_db_name
+  red_admin_username = var.red_admin_username
+  red_admin_password = var.red_admin_password
+  red_node_type      = var.red_node_type
+  red_cluster_type   = var.red_cluster_type
+  red_numnodes       = var.red_numnodes
+  red_public         = var.red_public
+  red_encrypted      = var.red_encrypted
+}
